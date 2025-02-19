@@ -1,5 +1,8 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import React, { useState, useEffect } from "react";
 import { Button, Card, Carousel } from "flowbite-react";
 import Link from "next/link";
@@ -18,10 +21,6 @@ import { RiPresentationLine } from "react-icons/ri";
 import { FaRegHandPaper } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { lazy } from "react";
-
-// Configurações de página
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 // Interfaces
 interface Slide {

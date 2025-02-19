@@ -1,5 +1,8 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import React, { useState, useEffect } from "react";
 import { Button, Card, Carousel } from "flowbite-react";
 import Image from "next/image";
@@ -33,9 +36,6 @@ interface Apresentacao {
   visualizacoes: number;
   slides: Slide[];
 }
-
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 export default function ViewPresentation({
   params,

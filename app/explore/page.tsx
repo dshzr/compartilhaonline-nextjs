@@ -1,5 +1,8 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Button, Card, TextInput } from "flowbite-react";
 import Link from "next/link";
@@ -25,9 +28,6 @@ interface Apresentacao {
   visualizacoes: number;
   publica: boolean;
 }
-
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 export default function ExplorePage() {
   const [apresentacoes, setApresentacoes] = useState<Apresentacao[]>([]);
