@@ -3,6 +3,11 @@ import db from "@/db";
 
 export async function GET(request: Request) {
   try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    if (!baseUrl) {
+      throw new Error("NEXT_PUBLIC_BASE_URL não configurado");
+    }
+
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search")?.toLowerCase();
     const category = searchParams.get("category");
@@ -61,9 +66,15 @@ export async function GET(request: Request) {
       });
     }
 
+    // Adiciona a URL base aos dados retornados
+    const apresentacoesComUrl = apresentacoes.map((ap) => ({
+      ...ap,
+      url: `${baseUrl}/view/${ap.id}`,
+    }));
+
     return NextResponse.json({
       sucesso: true,
-      apresentacoes,
+      apresentacoes: apresentacoesComUrl,
     });
   } catch (erro: any) {
     console.error("Erro ao buscar apresentações:", erro);

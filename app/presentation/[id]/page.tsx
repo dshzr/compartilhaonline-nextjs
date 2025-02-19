@@ -1,5 +1,8 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import React, { useState, useEffect } from "react";
 import { Button, Card, Carousel } from "flowbite-react";
 import Link from "next/link";
@@ -17,8 +20,9 @@ import {
 import { RiPresentationLine } from "react-icons/ri";
 import { FaRegHandPaper } from "react-icons/fa";
 import Swal from "sweetalert2";
-import dynamic from "next/dynamic";
+import { lazy } from "react";
 
+// Interfaces
 interface Slide {
   id: number;
   id_apresentacao: number;
@@ -44,10 +48,7 @@ interface Apresentacao {
 }
 
 // Carrega o QR Code apenas quando necessário
-const QRCodeComponent = dynamic(() => import("@/components/QRCode"), {
-  loading: () => <p>Carregando QR Code...</p>,
-  ssr: false,
-});
+const QRCodeComponent = lazy(() => import("@/components/QRCode"));
 
 export default function PresentationDetails({
   params,
@@ -109,11 +110,21 @@ export default function PresentationDetails({
     fetchData();
   }, [params.id, router]);
 
-  const handleShare = async () => {
-    try {
-      // Gera o link para a página de visualização pública
-      const shareUrl = `${window.location.origin}/view/${params.id}`;
+  const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/view/${params.id}`;
 
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: apresentacao?.titulo || "Apresentação",
+          text: "Confira esta apresentação!",
+          url: shareUrl,
+        });
+      } catch (error) {
+        console.error("Erro ao compartilhar:", error);
+      }
+    } else {
+      // Fallback para copiar link
       await navigator.clipboard.writeText(shareUrl);
       await Swal.fire({
         icon: "success",
@@ -121,14 +132,6 @@ export default function PresentationDetails({
         text: "O link público da apresentação foi copiado para sua área de transferência",
         timer: 2000,
         showConfirmButton: false,
-      });
-    } catch (error) {
-      console.error("Erro ao compartilhar:", error);
-      await Swal.fire({
-        icon: "error",
-        title: "Erro!",
-        text: "Não foi possível copiar o link",
-        confirmButtonColor: "#3085d6",
       });
     }
   };

@@ -1,5 +1,8 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import React, { useState, useEffect } from "react";
 import { Button, Card, Carousel } from "flowbite-react";
 import Image from "next/image";
@@ -143,36 +146,27 @@ export default function ViewPresentation({
     }
   };
 
-  const handleShareSlide = async (slide: Slide) => {
-    try {
-      const slideUrl = `${window.location.origin}/view/${params.id}?slide=${slide.ordem}`;
-      const shareData = {
-        title: `Slide ${slide.ordem} - ${apresentacao?.titulo}`,
-        text: `Confira o slide "${slide.nome_arquivo}" da apresentação "${apresentacao?.titulo}"`,
-        url: slideUrl,
-      };
+  const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/view/${params.id}`;
 
-      // Verifica se o navegador suporta compartilhamento nativo
-      if (navigator.share && navigator.canShare(shareData)) {
-        // Usa compartilhamento nativo do dispositivo
-        await navigator.share(shareData);
-      } else {
-        // Fallback: copia o link para a área de transferência
-        await navigator.clipboard.writeText(slideUrl);
-        await Swal.fire({
-          icon: "success",
-          title: "Link copiado!",
-          text: "O link do slide foi copiado para sua área de transferência",
-          timer: 2000,
-          showConfirmButton: false,
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: apresentacao?.titulo || "Apresentação",
+          text: "Confira esta apresentação!",
+          url: shareUrl,
         });
+      } catch (error) {
+        console.error("Erro ao compartilhar:", error);
       }
-    } catch (error) {
-      console.error("Erro ao compartilhar:", error);
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
       await Swal.fire({
-        icon: "error",
-        title: "Erro!",
-        text: "Não foi possível compartilhar o slide",
+        icon: "success",
+        title: "Link copiado!",
+        text: "O link da apresentação foi copiado para sua área de transferência",
+        timer: 2000,
+        showConfirmButton: false,
       });
     }
   };
@@ -354,7 +348,7 @@ export default function ViewPresentation({
                       color="blue"
                       size="sm"
                       className="flex-1"
-                      onClick={() => handleShareSlide(slide)}
+                      onClick={handleShare}
                     >
                       <HiOutlineShare className="mr-2 h-4 w-4" />
                       Compartilhar

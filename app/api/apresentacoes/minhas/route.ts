@@ -8,6 +8,11 @@ export const revalidate = 0;
 
 export async function GET(request: Request) {
   try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    if (!baseUrl) {
+      throw new Error("NEXT_PUBLIC_BASE_URL não configurado");
+    }
+
     const token = request.headers.get("Authorization")?.split(" ")[1];
     if (!token) {
       return NextResponse.json(
@@ -48,9 +53,15 @@ export async function GET(request: Request) {
       }),
     );
 
+    // Adiciona a URL base aos dados retornados
+    const apresentacoesComUrl = apresentacoesComSlides.map((ap) => ({
+      ...ap,
+      url: `${baseUrl}/presentation/${ap.id}`,
+    }));
+
     return NextResponse.json({
       sucesso: true,
-      apresentacoes: apresentacoesComSlides,
+      apresentacoes: apresentacoesComUrl,
     });
   } catch (erro: any) {
     console.error("Erro completo:", erro); // Debug detalhado

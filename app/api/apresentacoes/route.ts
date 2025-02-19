@@ -20,8 +20,6 @@ export async function POST(request: Request) {
     
     // Parse multipart/form-data
     const formData = await request.formData();
-    const file = formData.get("file") as File | null;
-    
     console.log("Dados recebidos:", {
       id_usuario: formData.get("id_usuario"),
       titulo: formData.get("titulo"),
@@ -29,7 +27,7 @@ export async function POST(request: Request) {
       categoria: formData.get("categoria"),
       data_evento: formData.get("data_evento"),
       publica: formData.get("publica"),
-      fileName: file?.name // Corrected access to file name
+      fileName: formData.get("file")?.['name']
     });
     const id_usuario = formData.get("id_usuario")?.toString();
     const titulo = formData.get("titulo")?.toString();
@@ -38,6 +36,7 @@ export async function POST(request: Request) {
     const categoria = formData.get("categoria")?.toString();
     const data_evento = formData.get("data_evento")?.toString();
     const publica = formData.get("publica")?.toString();
+    const file = formData.get("file") as File;
     if (!file) {
       throw new Error("Arquivo não enviado.");
     }
@@ -48,7 +47,10 @@ export async function POST(request: Request) {
     const fileName = file.name;
 
     // Gera o QR code antes de criar a apresentação
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    if (!baseUrl) {
+      throw new Error("NEXT_PUBLIC_BASE_URL não configurado");
+    }
     
     // Insere a nova apresentação e recebe o ID
     const [id] = await db("apresentacoes")
@@ -73,14 +75,7 @@ export async function POST(request: Request) {
 
     // Gera o QR code com o ID da apresentação
     const viewUrl = `${baseUrl}/view/${id}`;
-    const qrCodeDataUrl = await QRCode.toDataURL(viewUrl, {
-      margin: 1,
-      width: 300,
-      color: {
-        dark: '#000',
-        light: '#fff'
-      }
-    });
+    const qrCodeDataUrl = await QRCode.toDataURL(viewUrl);
 
     // Atualiza a apresentação com o QR code
     await db("apresentacoes")

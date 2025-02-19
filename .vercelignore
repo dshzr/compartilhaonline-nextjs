@@ -1,0 +1,6 @@
+Dockerfile
+docker-compose.yml
+docker-entrypoint.sh
+.env.example
+.dockerignore
+README.md 

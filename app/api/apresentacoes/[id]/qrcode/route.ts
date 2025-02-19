@@ -8,6 +8,11 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    if (!baseUrl) {
+      throw new Error("NEXT_PUBLIC_BASE_URL não configurado");
+    }
+
     const token = request.headers.get("Authorization")?.split(" ")[1];
     if (!token) {
       return NextResponse.json(
@@ -25,7 +30,7 @@ export async function GET(
     }
 
     // Gera a URL pública de visualização
-    const viewUrl = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/view/${params.id}`;
+    const viewUrl = `${baseUrl}/view/${params.id}`;
     
     // Gera o QR Code
     const qrCode = await QRCode.toDataURL(viewUrl);
