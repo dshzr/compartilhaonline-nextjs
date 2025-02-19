@@ -1,18 +1,27 @@
 const webpack = require("webpack");
 
-module.exports = {
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        oracledb: false, // Define fallback para o módulo oracledb
-      };
-    }
-    config.plugins.push(
-      new webpack.IgnorePlugin({
-        resourceRegExp: /^oracledb$/,
-      })
-    );
-    return config;
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'standalone',
+  images: {
+    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+      {
+        protocol: 'http',
+        hostname: '**',
+      },
+    ],
+  },
+  // Desabilitar geração estática para rotas dinâmicas
+  experimental: {
+    // Força todas as rotas a serem server-side rendered
+    workerThreads: false,
+    cpus: 1
   },
 };
+
+module.exports = nextConfig;

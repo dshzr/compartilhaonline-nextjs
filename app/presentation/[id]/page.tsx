@@ -17,8 +17,13 @@ import {
 import { RiPresentationLine } from "react-icons/ri";
 import { FaRegHandPaper } from "react-icons/fa";
 import Swal from "sweetalert2";
-import dynamic from "next/dynamic";
+import { lazy } from "react";
 
+// Configurações de página
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+// Interfaces
 interface Slide {
   id: number;
   id_apresentacao: number;
@@ -44,10 +49,7 @@ interface Apresentacao {
 }
 
 // Carrega o QR Code apenas quando necessário
-const QRCodeComponent = dynamic(() => import("@/components/QRCode"), {
-  loading: () => <p>Carregando QR Code...</p>,
-  ssr: false,
-});
+const QRCodeComponent = lazy(() => import("@/components/QRCode"));
 
 export default function PresentationDetails({
   params,

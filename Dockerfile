@@ -73,8 +73,8 @@ FROM node:18-alpine AS runner
 
 WORKDIR /app
 
-# Instalar netcat
-RUN apk add --no-cache netcat-openbsd
+# Instalar ferramentas de rede
+RUN apk add --no-cache netcat-openbsd iputils
 
 # Copiar arquivos necessários do builder
 COPY --from=builder /app/package*.json ./

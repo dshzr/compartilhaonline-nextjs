@@ -26,6 +26,9 @@ interface Apresentacao {
   publica: boolean;
 }
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function ExplorePage() {
   const [apresentacoes, setApresentacoes] = useState<Apresentacao[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
