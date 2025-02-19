@@ -8,14 +8,25 @@ export async function compressBase64Image(base64: string) {
   };
 
   try {
-    // Converte base64 para File
-    const file = base64ToFile(base64);
-    // Comprime
-    const compressedFile = await imageCompression(file, options);
-    // Converte volta para base64
-    return await fileToBase64(compressedFile);
+    // Convert base64 to blob
+    const fetchResponse = await fetch(base64);
+    const blob = await fetchResponse.blob();
+
+    // Convert blob to File
+    const file = new File([blob], 'image.jpg', { type: 'image/jpeg' });
+
+    // Compress the image
+    const compressedBlob = await imageCompression(file, options);
+
+    // Convert compressed blob back to base64
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(compressedBlob);
+    });
   } catch (error) {
-    console.error('Erro na compressão:', error);
-    return base64;
+    console.error('Error compressing image:', error);
+    return base64; // Return original if compression fails
   }
-} 
+}

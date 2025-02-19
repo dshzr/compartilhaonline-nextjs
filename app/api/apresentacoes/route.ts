@@ -20,6 +20,8 @@ export async function POST(request: Request) {
     
     // Parse multipart/form-data
     const formData = await request.formData();
+    const file = formData.get("file") as File | null;
+    
     console.log("Dados recebidos:", {
       id_usuario: formData.get("id_usuario"),
       titulo: formData.get("titulo"),
@@ -27,7 +29,7 @@ export async function POST(request: Request) {
       categoria: formData.get("categoria"),
       data_evento: formData.get("data_evento"),
       publica: formData.get("publica"),
-      fileName: formData.get("file")?.['name']
+      fileName: file?.name // Corrected access to file name
     });
     const id_usuario = formData.get("id_usuario")?.toString();
     const titulo = formData.get("titulo")?.toString();
@@ -36,7 +38,6 @@ export async function POST(request: Request) {
     const categoria = formData.get("categoria")?.toString();
     const data_evento = formData.get("data_evento")?.toString();
     const publica = formData.get("publica")?.toString();
-    const file = formData.get("file") as File;
     if (!file) {
       throw new Error("Arquivo não enviado.");
     }
