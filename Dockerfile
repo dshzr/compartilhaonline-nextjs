@@ -73,6 +73,9 @@ FROM node:18-alpine AS runner
 
 WORKDIR /app
 
+# Instalar netcat
+RUN apk add --no-cache netcat-openbsd
+
 # Copiar arquivos necessários do builder
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/.next ./.next
