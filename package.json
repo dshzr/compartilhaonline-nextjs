@@ -8,7 +8,9 @@
     "start": "next start",
     "format": "prettier . --write",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "vercel-build": "npm run migrate && next build",
+    "migrate": "knex migrate:latest"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
