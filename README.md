@@ -1,3 +1,65 @@
+# Compartilha Online
+
+Plataforma para compartilhamento de apresentações PowerPoint.
+
+## Executando com Docker
+
+1. Clone o repositório
+2. Copie o arquivo de ambiente:
+   ```bash
+   cp .env.example .env
+   ```
+3. Configure as variáveis no `.env`
+4. Execute com Docker Compose:
+   ```bash
+   docker-compose up -d
+   ```
+5. Execute as migrações:
+   ```bash
+   docker-compose exec app npm run migrate
+   ```
+
+A aplicação estará disponível em http://localhost:3000
+
+## Desenvolvimento local
+
+Se preferir rodar sem Docker:
+
+1. Instale as dependências:
+   ```bash
+   npm install
+   ```
+2. Configure o banco de dados PostgreSQL
+3. Configure as variáveis de ambiente
+4. Execute as migrações:
+   ```bash
+   npm run migrate
+   ```
+5. Inicie o servidor:
+   ```bash
+   npm run dev
+   ```
+
+## Tecnologias
+
+- Next.js 13
+- TypeScript
+- Tailwind CSS
+- Flowbite React
+- PostgreSQL
+- Knex.js
+- Docker
+
+## Funcionalidades
+
+- Upload e conversão de apresentações PowerPoint
+- Compartilhamento público/privado
+- Visualização de slides
+- Sistema de categorias
+- Busca avançada
+- Estatísticas de visualização
+- QR Code para compartilhamento
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

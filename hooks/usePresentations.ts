@@ -103,11 +103,17 @@ export function usePresentations() {
     }
   };
 
+  const getAbsoluteUrl = (path: string) => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+    return `${baseUrl}${path}`;
+  };
+
   return {
     presentations,
     loading,
     fetchPresentations,
     createPresentation,
     deletePresentation,
+    getAbsoluteUrl,
   };
 }

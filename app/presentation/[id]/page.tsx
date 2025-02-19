@@ -109,11 +109,21 @@ export default function PresentationDetails({
     fetchData();
   }, [params.id, router]);
 
-  const handleShare = async () => {
-    try {
-      // Gera o link para a página de visualização pública
-      const shareUrl = `${window.location.origin}/view/${params.id}`;
+  const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/view/${params.id}`;
 
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: apresentacao?.titulo || "Apresentação",
+          text: "Confira esta apresentação!",
+          url: shareUrl,
+        });
+      } catch (error) {
+        console.error("Erro ao compartilhar:", error);
+      }
+    } else {
+      // Fallback para copiar link
       await navigator.clipboard.writeText(shareUrl);
       await Swal.fire({
         icon: "success",
@@ -121,14 +131,6 @@ export default function PresentationDetails({
         text: "O link público da apresentação foi copiado para sua área de transferência",
         timer: 2000,
         showConfirmButton: false,
-      });
-    } catch (error) {
-      console.error("Erro ao compartilhar:", error);
-      await Swal.fire({
-        icon: "error",
-        title: "Erro!",
-        text: "Não foi possível copiar o link",
-        confirmButtonColor: "#3085d6",
       });
     }
   };

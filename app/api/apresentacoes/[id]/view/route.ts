@@ -6,6 +6,11 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    if (!baseUrl) {
+      throw new Error("NEXT_PUBLIC_BASE_URL não configurado");
+    }
+
     // Busca a apresentação pública
     const apresentacao = await db("apresentacoes")
       .select(
@@ -43,6 +48,7 @@ export async function GET(
       apresentacao: {
         ...apresentacao,
         slides,
+        url: `${baseUrl}/view/${params.id}`
       },
     });
   } catch (erro: any) {
