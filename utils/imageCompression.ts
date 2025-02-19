@@ -19,6 +19,15 @@ const base64ToFile = (base64String: string): File => {
   return new File([blob], 'image.jpg', { type: 'image/jpeg' });
 };
 
+const fileToBase64 = (file: File | Blob): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 export async function compressBase64Image(base64: string) {
   const options = {
     maxSizeMB: 1,
@@ -32,7 +41,7 @@ export async function compressBase64Image(base64: string) {
     // Comprime
     const compressedFile = await imageCompression(file, options);
     // Converte volta para base64
-    return await imageCompression.getDataUrlFromFile(compressedFile);
+    return await fileToBase64(compressedFile);
   } catch (error) {
     console.error('Erro ao comprimir imagem:', error);
     return base64; // Retorna original em caso de erro

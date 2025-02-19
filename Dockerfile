@@ -12,7 +12,6 @@ COPY tsconfig.json ./
 COPY postcss.config.js ./
 COPY tailwind.config.js ./
 COPY next.config.js ./
-COPY .env* ./
 
 # Instalar todas as dependências (incluindo devDependencies)
 RUN npm install
@@ -55,10 +54,13 @@ RUN mkdir -p \
 # Copiar o código fonte
 COPY . .
 
-# Configurar ambiente
+# Configurar variáveis de ambiente padrão
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV DATABASE_URL="postgresql://postgres:postgres@db:5432/compartilha"
+ENV JWT_SECRET="seu_jwt_secret_aqui"
+ENV NEXT_PUBLIC_BASE_URL="http://localhost:3000"
 
 # Garantir que os tipos estejam disponíveis
 RUN npm run typecheck || true
@@ -79,7 +81,6 @@ COPY --from=builder /app/types ./types
 COPY --from=builder /app/postcss.config.js ./
 COPY --from=builder /app/tailwind.config.js ./
 COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/.env* ./
 
 # Instalar apenas dependências de produção
 RUN npm ci --only=production
@@ -94,13 +95,21 @@ RUN npm install --save \
     knex \
     pg
 
-# Configurar ambiente de produção
+# Configurar variáveis de ambiente de produção
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
+ENV DATABASE_URL="postgresql://postgres:postgres@db:5432/compartilha"
+ENV JWT_SECRET="seu_jwt_secret_aqui"
+ENV NEXT_PUBLIC_BASE_URL="http://localhost:3000"
 
 # Expor a porta
 EXPOSE 3000
 
+# Script de inicialização
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Comando para iniciar a aplicação
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["npm", "start"] 
